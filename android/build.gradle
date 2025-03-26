@@ -6,19 +6,20 @@ buildscript {
         minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '26')
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '35')
         targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '35')
-        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.20'
-
+        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.25'
         ndkVersion = "26.1.10909125"
     }
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven' }
+        maven { url "https://jitpack.io" }
     }
     dependencies {
     classpath("androidx.compose.compiler:compiler:1.5.11")
     classpath("com.android.tools.build:gradle:8.1.3")  // Ensure Gradle version is set
     classpath("com.facebook.react:react-native-gradle-plugin:0.76.7") // Use the correct version
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20") // Ensure latest Kotlin version
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.25") // Ensure latest Kotlin version
 }
     // dependencies {
     //     classpath('com.android.tools.build:gradle')
