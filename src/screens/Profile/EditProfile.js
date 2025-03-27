@@ -1,52 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
+  Image,
 } from "react-native";
 import { colors } from "../../utilities/colors";
 import ComponentBody from "../../components/ComponentBody";
-import { fonts } from "../../utilities/fonts";
 import Input from "../../components/Input";
-import Icon, { IconTypes } from "../../components/Icon";
-import OpenImagePicker from "../../components/ImagePicker";
-import PICKER from "../../assests/images/Avatar.png";
+import { FontAwesome } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import AVATAR from "../../assests/images/Avatar.png";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "../../Store/Actions/GeneralActions";
-import DatePick from "../../components/DatePicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AuthMiddleware } from "../../Store/Middlewares/AuthMiddleware";
 import Header from "../../components/Header";
+import moment from "moment";
 
-const EditProfile = (props) => {
+const OpenImagePicker = async (callback) => {
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      callback(result.assets[0]);
+    } else {
+      console.warn("Image selection was canceled.");
+    }
+  } catch (error) {
+    console.error("Error selecting image:", error);
+  }
+};
+
+const EditProfile = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const userdata = useSelector((state) => state.AuthReducer.user);
-  const screenType = props?.route?.params?.screenType;
-  const [profileImage, setProfileImage] = useState(null);
-  const [firstName, setfirstName] = useState(userdata.first_name);
-  const [lastName, setlastName] = useState(userdata.last_name);
-  const [address, setaddress] = useState(userdata?.location);
-  const [DOB, setDOB] = useState(userdata?.dob ? userdata?.dob : "");
-  const [phone, setphone] = useState(userdata?.contact_no);
-  const [email, setemail] = useState(userdata?.email);
-  const [dobModalOpen, setdobModalOpen] = useState(false);
-  const [about, setAbout] = useState(userdata?.about);
-  const [position, setPosition] = useState(userdata?.position);
+
+  const [profileImage, setProfileImage] = useState(
+    userdata?.profile_image || AVATAR
+  );
+  const [firstName, setFirstName] = useState(userdata.first_name);
+  const [lastName, setLastName] = useState(userdata.last_name);
+  const [address, setAddress] = useState(userdata?.location);
+  const [DOB, setDOB] = useState(
+    userdata?.dob ? moment(userdata?.dob).format("MMM DD, YYYY") : ""
+  );
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const onPressSelectProfile = () => {
     OpenImagePicker((img) => {
-      let imageObj = img.path.split("/");
-      let imgObject = {
-        name: imageObj[imageObj.length - 1],
-        uri: img.path,
-        size: img.size,
-        type: img.mime
-      };
-      setProfileImage(imgObject);
+      if (img && img.uri) {
+        setProfileImage(img.uri);
+      } else {
+        console.warn("Image selection failed or was canceled.");
+      }
     });
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const handleConfirm = (date) => {
+    setDOB(moment(date).format("MMM DD, YYYY"));
+    setDatePickerVisibility(false);
   };
 
   const onUpdateProfile = () => {
@@ -60,76 +86,86 @@ const EditProfile = (props) => {
       lastName: lastName,
       address: address ?? "",
       dob: DOB,
-      profileImg: profileImage
+      profileImg: profileImage,
     };
 
     dispatch(AuthMiddleware.onUpdateProfile(userData))
-      .then((data) => {
+      .then(() => {
         navigation.goBack();
       })
       .catch((err) => {});
   };
 
   return (
-    <ComponentBody center contentContainerStyle={styles.contentContainerStyle}>
-      <Header title={"Edit Profile"} />
-      <TouchableOpacity onPress={onPressSelectProfile}>
-        <ImageBackground
-          source={
-            profileImage
-              ? profileImage
-              : userdata?.profile_image
-              ? { uri: userdata?.profile_image }
-              : PICKER
-          }
-          style={styles.imageBg}
-          imageStyle={styles.profile_image}
-          resizeMode="cover"
-        >
-          <View style={styles.profIconCont}>
-            <Icon
-              name={"camera"}
-              type={IconTypes.FontAwesome}
-              size={25}
-              color={colors.WHITE}
+    <>
+      <Header title="Edit Profile" />
+
+      <ComponentBody
+        center
+        contentContainerStyle={styles.contentContainerStyle}
+      >
+        <TouchableOpacity onPress={onPressSelectProfile}>
+          <ImageBackground
+            source={
+              typeof profileImage === "string" ? { uri: profileImage } : AVATAR
+            }
+            style={styles.imageBg}
+            imageStyle={styles.profile_image}
+            resizeMode="cover"
+          >
+            <View style={styles.profIconCont}>
+              <FontAwesome name="camera" size={25} color={colors.WHITE} />
+            </View>
+          </ImageBackground>
+        </TouchableOpacity>
+
+        <Input
+          placeholder="First Name"
+          value={firstName}
+          style={styles.input}
+          onChangeText={setFirstName}
+        />
+
+        <Input
+          placeholder="Last Name"
+          value={lastName}
+          style={styles.input}
+          onChangeText={setLastName}
+        />
+
+        <TouchableOpacity onPress={showDatePicker}>
+          <View pointerEvents="none">
+            <Input
+              placeholder="Select Date Of Birth"
+              value={DOB}
+              style={styles.input}
+              editable={false}
             />
           </View>
-        </ImageBackground>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      <Input
-        placeholder={"First Name"}
-        value={firstName}
-        style={styles.input}
-        onChangeText={(e) => setfirstName(e)}
-      />
+        <Input
+          placeholder="Address"
+          value={address}
+          style={styles.input}
+          onChangeText={setAddress}
+        />
 
-      <Input
-        placeholder={"Last Name"}
-        value={lastName}
-        style={styles.input}
-        onChangeText={(e) => setlastName(e)}
-      />
-      <DatePick
-        date={DOB}
-        maximumDate={new Date()}
-        setDate={setDOB}
-        placeholder="Select Date Of Birth"
-      />
-      <Input
-        placeholder={"Address"}
-        value={address}
-        style={styles.input}
-        // multiline={true}
-        onChangeText={(e) => setaddress(e)}
-      />
+        <Button
+          title="Update"
+          onPress={onUpdateProfile}
+          style={styles.button}
+        />
 
-      <Button
-        title={"Update"}
-        onPress={onUpdateProfile}
-        style={styles.button}
-      />
-    </ComponentBody>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          maximumDate={new Date()}
+          onConfirm={handleConfirm}
+          onCancel={() => setDatePickerVisibility(false)}
+        />
+      </ComponentBody>
+    </>
   );
 };
 
@@ -137,30 +173,24 @@ export default EditProfile;
 
 const styles = StyleSheet.create({
   input: {
-    width: "90%"
+    width: "100%",
   },
   button: {
     width: "90%",
-    marginTop: "35%"
+    marginTop: "35%",
   },
   profile_image: {
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: colors.GREEN
+    borderColor: colors.GREEN,
   },
   imageBg: {
     width: 160,
     height: 160,
     borderRadius: 100,
     alignSelf: "center",
-    marginVertical: 20
-  },
-  media_image: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginTop: 10,
-    marginLeft: 5
+    marginVertical: 20,
+    overflow: "hidden",
   },
   profIconCont: {
     backgroundColor: `${colors.BLACK}70`,
@@ -168,9 +198,9 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 100,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   contentContainerStyle: {
-    // flex: 1,
-  }
+    paddingHorizontal: 25,
+  },
 });

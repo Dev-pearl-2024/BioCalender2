@@ -260,8 +260,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: colors.PRIMARY,
+    borderColor: colors.GREEN,
     borderRadius: 10,
+    gap: 10,
     padding: 8,
   },
   profilePrompt: {

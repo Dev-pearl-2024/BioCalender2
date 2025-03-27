@@ -6,14 +6,14 @@ import {
   TouchableOpacity,
   View,
   Image,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { colors } from "../utilities/colors";
 import { fonts } from "../utilities/fonts";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Feather from "@expo/vector-icons/Feather";
 import TextComponent from "./TextComponent";
-import BgHeader from "../assests/images/bgHeader.png"; // Background Image
+import BgHeader from "../assests/images/bgHeader.png";
 
 const Header = (props) => {
   const navigation = useNavigation();
@@ -77,33 +77,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Space between left, center, and right
     width: "100%",
     height: 70,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   leftContainer: {
     width: "20%",
     alignItems: "flex-start",
-    justifyContent: "center" // Center the back icon vertically
+    justifyContent: "center", // Center the back icon vertically
   },
   centerContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center" // Center the text vertically
+    justifyContent: "center", // Center the text vertically
   },
   rightContainer: {
     width: "20%",
     alignItems: "flex-end",
-    justifyContent: "center" // Center the right icons vertically
+    justifyContent: "center", // Center the right icons vertically
   },
   imageStyle: {
     width: Dimensions.get("window").width,
     height: "100%", // Ensures the background covers the full height
-    resizeMode: "stretch"
+    resizeMode: "stretch",
   },
   heading: {
     fontSize: 16,
     color: colors.WHITE,
     fontFamily: fonts.SEMI_BOLD,
     fontWeight: "bold",
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
