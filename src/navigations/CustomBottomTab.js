@@ -35,7 +35,7 @@ const CustomBottomTab = ({ state, navigation }) => {
   );
 
   return (
-    <View>
+    <View style={{width:"100%", position:"absolute", bottom:0, alignItems:"center", justifyContent:"center"}}>
       <ImageBackground
         style={styles.tabBarStyle}
         imageStyle={styles.imageStyle}

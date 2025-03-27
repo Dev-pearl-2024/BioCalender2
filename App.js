@@ -22,13 +22,11 @@ export default function App() {
 
   return (
     <Provider store={Store}>
-      <StripeProvider publishableKey={publishableKey}>
         <NavigationContainer>
           <SafeAreaProvider>
             <AppNavigation />
           </SafeAreaProvider>
         </NavigationContainer>
-      </StripeProvider>
     </Provider>
   );
 }
