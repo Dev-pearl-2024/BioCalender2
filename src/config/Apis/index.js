@@ -5,7 +5,7 @@
 // const BASE_URL = `https://appdevprojects.co/bio-calendar/public/api/`
 
 // Production
-const BASE_URL = `https://www.biocalendar.net/api/`;
+const BASE_URL = `https://biocalendar.net/api/`;
 // const BASE_URL = `https://server1.pearl-developer.com/bio-calendar/public/`;
 
 export const API_KEY = "apikey";
@@ -44,7 +44,7 @@ const Apis = {
   subscriptions: `${BASE_URL}subscriptions`,
   // buy_subscription: `${BASE_URL}buy_subscription`,
   buy_subscription: `${BASE_URL}pay-via-stripe-token`,
-  cancel_subscription: `${BASE_URL}cancel_subscription`
+  cancel_subscription: `${BASE_URL}cancel_subscription`,
 };
 
 export default Apis;
