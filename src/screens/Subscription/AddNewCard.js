@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
@@ -31,6 +32,7 @@ import CHECKED from "../../assests/images/successfull.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useStripe } from "@stripe/stripe-react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 // import MonthPicker from "react-native-month-year-picker";
 
 const countries = [
@@ -198,25 +200,42 @@ const AddNewCard = () => {
             />
             {/* <TouchableOpacity
               style={styles.inputContainer}
-              onPress={() => { Keyboard.dismiss(), setdobModalOpen(true) }}>
+              onPress={() => {
+                Keyboard.dismiss(), setdobModalOpen(true);
+              }}
+            >
               <View style={styles.dateText}>
-                {/* <AntDesign name={'calendar'} size={20} color={colors.BORDER} />
-                {/* <Text style={{ marginLeft: 3, color: colors.WHITE }}>
+                <AntDesign name={"calendar"} size={20} color={colors.BORDER} />
+                <Text style={{ marginLeft: 3, color: colors.WHITE }}>
                   {expiryDate
-                    ? moment(expiryDate).format('MM/YYYY')
-                    : 'Expiry date'}
+                    ? moment(expiryDate).format("MM/YYYY")
+                    : "Expiry date"}
                 </Text>
               </View>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
 
-            {/* <DatePicker
-              modal
-              mode={'date'}
-              open={dobModalOpen}
-              minimumDate={new Date()}
-              date={new Date()}
-              onConfirm={date => {
-                setExpiryDate(moment(date).format('MM/YYYY'));
+            <TouchableOpacity
+              onPress={() => setdobModalOpen(true)}
+              style={styles.DOB__Calender}
+            > */}
+              {/* <TextInput
+                placeholder="Select Date Of Birth"
+                value={expiryDate}
+                editable={false}
+                pointerEvents="none"
+                style={{
+                  color: colors.WHITE
+                }}
+                placeholderTextColor="white"
+              /> */}
+            {/* </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={dobModalOpen}
+              mode="date"
+              display={Platform.OS === "ios" ? "inline" : "default"}
+              minimumDate={new Date()} // ⬅️ This prevents past dates from being selected
+              onConfirm={(date) => {
+                setExpiryDate(moment(date).format("MM/YYYY"));
                 setdobModalOpen(false);
               }}
               onCancel={() => {
@@ -287,7 +306,7 @@ const AddNewCard = () => {
           </View>
         </View>
       </Modal>
-      {dobModalOpen && (
+      {/* {dobModalOpen && (
         <MonthPicker
           onChange={onValueChange}
           value={expiryDate ? expiryDate : new Date()}
@@ -297,7 +316,7 @@ const AddNewCard = () => {
           // maximumDate={new Date(2025, 5)}
           // locale='en'
         />
-      )}
+      )} */}
     </View>
     // </ComponentBody>
   );

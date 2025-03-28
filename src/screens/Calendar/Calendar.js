@@ -52,19 +52,19 @@ const BioCalendar = () => {
       {
         type: "Physical",
         value: biorhythms?.rangePhysical,
-        sign: biorhythms?.textofPhysical,
+        sign: biorhythms?.textofPhysical
       },
       {
         type: "Emotional",
         value: biorhythms?.rangeEmotional,
-        sign: biorhythms?.textofEmotional,
+        sign: biorhythms?.textofEmotional
       },
       {
         type: "Intellectual",
         value: biorhythms?.rangeIntellectual,
-        sign: biorhythms?.textofIntellectual,
-      },
-    ],
+        sign: biorhythms?.textofIntellectual
+      }
+    ]
   };
 
   return (
@@ -77,13 +77,13 @@ const BioCalendar = () => {
           markedDates={{
             [date.toISOString().split("T")[0]]: {
               selected: true,
-              selectedColor: colors.PRIMARY,
-            },
+              selectedColor: colors.PRIMARY
+            }
           }}
           theme={{
             todayTextColor: colors.PRIMARY,
             selectedDayBackgroundColor: colors.PRIMARY,
-            arrowColor: colors.PRIMARY,
+            arrowColor: colors.PRIMARY
           }}
         />
       </View>
@@ -110,7 +110,11 @@ const BioCalendar = () => {
               title={"Go to Profile"}
               onPress={() => {
                 setShowModal(false);
-                navigation.navigate("Profile");
+                console.log("click");
+                navigation.navigate("DrawerMenu", {
+                  screen: "BottomTab",
+                  params: { screen: "Profile" }
+                });
               }}
               style={styles.button}
             />
@@ -124,48 +128,48 @@ const BioCalendar = () => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    alignSelf: "center",
+    alignSelf: "center"
   },
   calendarCont: {
     width: "100%",
-    marginVertical: 10,
+    marginVertical: 10
   },
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   modalContent: {
     backgroundColor: colors.GREY,
     width: "80%",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 10
   },
   iconRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 5,
+    marginBottom: 5
   },
   icon: {
     width: 80,
-    height: 80,
+    height: 80
   },
   modalTitle: {
     fontSize: 16,
     textAlign: "center",
     fontFamily: fonts.BOLD_ITALIC,
-    marginVertical: 5,
+    marginVertical: 5
   },
   modalText: {
     fontSize: 12,
     textAlign: "center",
     fontFamily: fonts.ITALIC,
-    marginBottom: 5,
+    marginBottom: 5
   },
   button: {
-    marginTop: 10,
-  },
+    marginTop: 10
+  }
 });
 
 export default BioCalendar;

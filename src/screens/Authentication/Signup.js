@@ -105,7 +105,7 @@ const Signup = () => {
 
       <TextComponent
         text={"Sign Up"}
-        style={[styles.heading, { color: "WHITE", marginTop: 280 }]}
+        style={[styles.heading, { color: "white", marginTop: 280 }]}
       />
       <Text style={{ marginTop: 20 }} />
       <Input
@@ -113,7 +113,7 @@ const Signup = () => {
         value={firstName}
         style={styles.input}
         onChangeText={(e) => setfirstName(e)}
-        placeholderTextColor="WHITE"
+        placeholderTextColor="white"
       />
 
       <Input
@@ -121,7 +121,7 @@ const Signup = () => {
         value={lastName}
         style={styles.input}
         onChangeText={(e) => setlastName(e)}
-        placeholderTextColor="WHITE"
+        placeholderTextColor="white"
       />
 
       <Input
@@ -132,7 +132,7 @@ const Signup = () => {
           email.length > 0 && !email.includes("@") ? "Invalid Email" : null
         }
         onChangeText={(e) => setEmail(e)}
-        placeholderTextColor="WHITE"
+        placeholderTextColor="white"
       />
 
       <Input
@@ -142,7 +142,7 @@ const Signup = () => {
         style={styles.input}
         isPassword
         secureTextEntry
-        placeholderTextColor="WHITE"
+        placeholderTextColor="white"
       />
 
       <Input
@@ -152,7 +152,7 @@ const Signup = () => {
         style={styles.input}
         isPassword
         secureTextEntry
-        placeholderTextColor="WHITE"
+        placeholderTextColor="white"
       />
 
       <TouchableOpacity
@@ -167,6 +167,7 @@ const Signup = () => {
           style={{
             color: colors.WHITE,
           }}
+          placeholderTextColor="white"
         />
       </TouchableOpacity>
 

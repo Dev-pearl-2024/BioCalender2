@@ -2,8 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet } from "react-native";
 import Home from "../screens/Home/Home";
-// import Profile from "../screens/Profile/Profile";
-// import Settings from "../screens/Settings/Settings";
 import CustomBottomTab from "./CustomBottomTab";
 import Settings from "../screens/Settings/Settings";
 import Profile from "../screens/Profile/Profile";

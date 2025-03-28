@@ -1,72 +1,67 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import * as AppleAuthentication from "expo-apple-authentication";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
+import { showAlert } from "../../Store/Actions/GeneralActions";
+import { AuthMiddleware } from "../../Store/Middlewares/AuthMiddleware";
+import Button from "../../components/Button";
+import Icon, { IconTypes } from "../../components/Icon";
 import { colors } from "../../utilities/colors";
-import ComponentBody from "../../components/ComponentBody";
 import Image from "../../components/Image";
 import TextComponent from "../../components/TextComponent";
-import { fonts } from "../../utilities/fonts";
-import Button from "../../components/Button";
+import ComponentBody from "../../components/ComponentBody";
 import LOGO from "../../assests/images/logoBg.png";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../Store/Actions/GeneralActions";
-import * as AppleAuthentication from "expo-apple-authentication";
-import jwtDecode from "jwt-decode";
-import { AuthMiddleware } from "../../Store/Middlewares/AuthMiddleware";
-import Icon, { IconTypes } from "../../components/Icon";
-// import {
-//   GoogleSignin,
-//   statusCodes
-// } from "@react-native-google-signin/google-signin";
+import { AntDesign } from "@expo/vector-icons";
+import { Foundation } from "@expo/vector-icons";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const PreLogin = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-//   useEffect(() => {
-//     GoogleSignin.configure({
-//       offlineAccess: true,
-//       webClientId:
-//         "563319386292-chd28c5hq4dnfdgvf6kdh3ld7cj4t4n6.apps.googleusercontent.com"
-//     });
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId:
+      "563319386292-chd28c5hq4dnfdgvf6kdh3ld7cj4t4n6.apps.googleusercontent.com", // Replace with your actual Google Client ID
+    iosClientId: "YOUR_IOS_CLIENT_ID.apps.googleusercontent.com",
+    androidClientId: "YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com"
+  });
 
-//     return () => {
-//       GoogleSignin.revokeAccess(); // Corrected method
-//     };
-//   }, []);
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { authentication } = response;
+      handleGoogleLogin(authentication.accessToken);
+    }
+  }, [response]);
 
-  const onPressGoogleLogin = async () => {
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
+  const handleGoogleLogin = async (token) => {
+    try {
+      const userInfoResponse = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      const userInfo = await userInfoResponse.json();
 
-    //   if (userInfo?.user?.email) {
-    //     const userData = {
-    //       email: userInfo.user.email,
-    //       first_name: userInfo.user.givenName,
-    //       last_name: userInfo.user.familyName
-    //     };
-    //     dispatch(AuthMiddleware.social_login(userData));
-    //   }
-    // } catch (error) {
-    //   console.log("Google Sign-In Error:", error);
-    //   if (error.code) {
-    //     switch (error.code) {
-    //       case statusCodes.SIGN_IN_CANCELLED:
-    //         console.log("User cancelled the login flow");
-    //         break;
-    //       case statusCodes.IN_PROGRESS:
-    //         console.log("Sign-in already in progress");
-    //         break;
-    //       case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-    //         console.log("Play services not available or outdated");
-    //         break;
-    //       default:
-    //         console.log(error);
-    //     }
-    //   }
-    // }
+      if (userInfo?.email) {
+        const userData = {
+          email: userInfo.email,
+          first_name: userInfo.given_name,
+          last_name: userInfo.family_name
+        };
+
+        dispatch(AuthMiddleware.social_login(userData));
+      }
+    } catch (error) {
+      console.log("Google Sign-In Error:", error);
+      dispatch(showAlert({ message: "Google Sign-In Failed", type: "Error" }));
+    }
   };
 
   const onPressAppleLogin = async () => {
@@ -98,7 +93,7 @@ const PreLogin = () => {
           })
         );
       } else {
-        dispatch(showAlert({ message: "Failed.", type: "Error" }));
+        dispatch(showAlert({ message: "Apple Sign-In Failed", type: "Error" }));
       }
     } catch (error) {
       console.log("Apple Sign-In Error:", error);
@@ -114,29 +109,17 @@ const PreLogin = () => {
         title={"Sign in with Email"}
         onPress={() => navigation.navigate("Login")}
         style={styles.button}
-        LeftIcon={
-          <Icon
-            name={"mail"}
-            type={IconTypes.Foundation}
-            size={20}
-            color={colors.WHITE}
-          />
-        }
+        LeftIcon={<Foundation name="mail" size={20} color={colors.WHITE} />}
       />
+
       <Button
         title={"Sign in with Google"}
         color={colors.RED}
-        onPress={onPressGoogleLogin}
+        onPress={() => promptAsync()} // Calls Google login
         style={styles.button}
-        LeftIcon={
-          <Icon
-            name={"google"}
-            type={IconTypes.AntDesign}
-            size={20}
-            color={colors.WHITE}
-          />
-        }
+        LeftIcon={<AntDesign name="google" size={20} color={colors.WHITE} />}
       />
+
       {Platform.OS === "ios" && (
         <Button
           title={"Sign in with Apple"}
@@ -144,16 +127,10 @@ const PreLogin = () => {
           style={styles.button}
           color={colors.WHITE}
           Textstyle={{ color: colors.BLACK }}
-          LeftIcon={
-            <Icon
-              name={"apple1"}
-              type={IconTypes.AntDesign}
-              size={20}
-              color={colors.BLACK}
-            />
-          }
+          LeftIcon={<AntDesign name="apple1" size={20} color={colors.BLACK} />}
         />
       )}
+
       <View style={styles.wide_row}>
         <TextComponent
           text={"By signing up, you agree to our"}
@@ -190,7 +167,6 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 18,
-    fontFamily: fonts?.SEMI_BOLD,
     marginTop: 230,
     color: colors.WHITE,
     marginBottom: 10

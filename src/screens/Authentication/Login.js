@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
+import { FontAwesome } from "@expo/vector-icons";
+import { Foundation } from "@expo/vector-icons";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // import { appleAuth } from "@invertase/react-native-apple-authentication";
 
@@ -52,10 +54,10 @@ const Login = () => {
 
     if (!email) {
       dispatch(showAlert({ message: "Please enter email" }));
-    } 
+    }
     // else if (!validateEmail(email)) {
     //   dispatch(showAlert({ message: "Invalid Email" }));
-    // } 
+    // }
     else if (!password) {
       dispatch(showAlert({ message: "Please enter password" }));
     } else {
@@ -75,7 +77,7 @@ const Login = () => {
       );
       console.log(rs.data);
     } catch (error) {
-      console.log("demo error ///// ",error);
+      console.log("demo error ///// ", error);
     }
   };
 
@@ -96,16 +98,9 @@ const Login = () => {
         error={
           email.length > 0 && !validateEmail(email) ? "Invalid Email" : null
         }
-        leftIcon={
-          <Icon
-            name={"mail"}
-            type={IconTypes.Foundation}
-            size={20}
-            color={colors.WHITE}
-          />
-        }
+        leftIcon={<Foundation name="mail" size={20} color={colors.WHITE} />}
         onChangeText={setEmail}
-        placeholderTextColor="black"
+        placeholderTextColor="white"
       />
 
       <Input
@@ -113,17 +108,10 @@ const Login = () => {
         value={password}
         onChangeText={setPassword}
         style={styles.input}
-        leftIcon={
-          <Icon
-            name={"lock"}
-            type={IconTypes.FontAwesome}
-            size={20}
-            color={colors.BLACK}
-          />
-        }
+        leftIcon={<FontAwesome name="lock" size={20} color={colors.WHITE} />}
         isPassword
         secureTextEntry
-        placeholderTextColor="black"
+        placeholderTextColor="white"
       />
 
       <Button title={"Login"} onPress={onPressLogin} style={styles.button} />
@@ -157,7 +145,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.BLACK
+    backgroundColor: colors.WHITE
   },
   logo: {
     width: 310,
@@ -169,17 +157,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: fonts.SEMI_BOLD,
     marginTop: "30%",
-    color: colors.BLACK,
+    color: colors.WHITE,
     marginBottom: 10,
     fontWeight: "bold",
     fontSize: 16
   },
   span3: {
-    color: colors.BLACK,
+    color: colors.WHITE,
     fontSize: 12
   },
   link: {
-    color: colors.BLACK,
+    color: colors.WHITE,
     fontSize: 12,
     textDecorationLine: "underline"
   },

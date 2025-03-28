@@ -151,45 +151,10 @@ class UsersMiddleware {
           // });
           formData.append("user_id", userParseDetails.id);
 
-          // const data54 = {
-          //   card: {
-          //     address_city: null,
-          //     address_country: null,
-          //     address_line1: null,
-          //     address_line1_check: null,
-          //     address_line2: null,
-          //     address_state: null,
-          //     address_zip: null,
-          //     address_zip_check: null,
-          //     brand: "Visa",
-          //     country: "US",
-          //     cvc_check: "unchecked",
-          //     dynamic_last4: null,
-          //     exp_month: 9,
-          //     exp_year: 2026,
-          //     funding: "credit",
-          //     id: "card_1R67rZ06ShRfWNZFJuREXYFY",
-          //     last4: "1111",
-          //     name: null,
-          //     networks: { preferred: null },
-          //     object: "card",
-          //     regulated_status: "unregulated",
-          //     tokenization_method: null,
-          //     wallet: null
-          //   },
-          //   client_ip: "103.182.161.55",
-          //   created: 1742810649,
-          //   id: "tok_1R67rZ06ShRfWNZFfeCwIj3r",
-          //   livemode: false,
-          //   object: "token",
-          //   type: "card",
-          //   used: false
-          // };
-
           try {
             // Send FormData in POST request
             const storeResponseData = await axios.post(
-              "https://www.biocalendar.net/api/save-stripe-user-token",
+              "https://biocalendar.net/api/save-stripe-user-token",
               {
                 user_id: userParseDetails?.id,
                 token_id: data?.id,
@@ -207,8 +172,14 @@ class UsersMiddleware {
               //   }
               // }
             );
-
             console.log("Store form data response:", storeResponseData.data);
+            if (storeResponseData.data) {
+              await dispatch(storeCard(data));
+              await dispatch(
+                showAlert({ message: "Card saved successfully!" })
+              );
+              return data;
+            }
           } catch (error) {
             if (error.response) {
               // Server responded with a status code outside 2xx
@@ -225,10 +196,6 @@ class UsersMiddleware {
               console.error("Error message:", error.message);
             }
           }
-
-          await dispatch(storeCard(data));
-          await dispatch(showAlert({ message: "Card saved successfully!" }));
-          return data;
         }
       } catch (error) {
         console.error("Store Card Error:", error);

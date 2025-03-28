@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 import React from "react";
-import BG from "../assests/images/bg.png";
+import BG from "../assests/images/bg1.png";
 import Image from "./Image";
 
 const ComponentBody = (props) => {

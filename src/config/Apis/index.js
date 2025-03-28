@@ -5,7 +5,7 @@
 // const BASE_URL = `https://appdevprojects.co/bio-calendar/public/api/`
 
 // Production
-const BASE_URL = `https://www.biocalendar.net/api/`;
+const BASE_URL = `https://biocalendar.net/api/`;
 // const BASE_URL = `https://server1.pearl-developer.com/bio-calendar/public/`;
 
 export const API_KEY = "apikey";
