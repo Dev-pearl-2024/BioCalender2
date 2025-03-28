@@ -5,15 +5,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { colors } from "../../utilities/colors";
 import Button from "../../components/Button";
 import TextComponent from "../../components/TextComponent";
 import ComponentBody from "../../components/ComponentBody";
 import Input from "../../components/Input";
-import DatePick from "../../components/DatePicker";
 import Icon, { IconTypes } from "../../components/Icon";
 import { useDispatch } from "react-redux";
 import { showAlert } from "../../Store/Actions/GeneralActions";
@@ -22,14 +21,31 @@ import calculateBiorhythm from "../../utilities/calculateBiorhythms";
 import moment from "moment";
 import { fonts } from "../../utilities/fonts";
 import Header from "../../components/Header";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import {
+  Feather,
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
 const TeamBios = () => {
   const [showModal, setShowModal] = useState(true);
   const [name, setName] = useState("");
-  const [DOB, setDOB] = useState("");
+  const [DOB, setDOB] = useState(moment().format("MMM DD, YYYY")); // Default to today's date
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [teamBiosUser, setTeamBiosUser] = useState([]);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const handleConfirm = (date) => {
+    setDOB(moment(date).format("MMM DD, YYYY"));
+    setDatePickerVisibility(false);
+  };
 
   const addUser = () => {
     if (!name || !DOB) {
@@ -44,28 +60,28 @@ const TeamBios = () => {
         {
           type: "Physical",
           value: res?.rangePhysical,
-          sign: res?.textofPhysical
+          sign: res?.textofPhysical,
         },
         {
           type: "Emotional",
           value: res?.rangeEmotional,
-          sign: res?.textofEmotional
+          sign: res?.textofEmotional,
         },
         {
           type: "Intellectual",
           value: res?.rangeIntellectual,
-          sign: res?.textofIntellectual
-        }
-      ]
+          sign: res?.textofIntellectual,
+        },
+      ],
     };
 
     if (res) {
       setTeamBiosUser((prev) => [
         { id: prev.length + 1, name: name, dob: DOB, ...Biodata },
-        ...prev
+        ...prev,
       ]);
       setName("");
-      setDOB("");
+      setDOB(moment().format("MMM DD, YYYY")); // Reset to today's date
     }
   };
 
@@ -79,17 +95,18 @@ const TeamBios = () => {
             value={item.name}
             editable={false}
             style={styles.input}
-            // onChangeText={e => setName(e)}
           />
 
-          <DatePick
-            date={item.dob}
-            disable
-            maximumDate={new Date()}
-            style={styles.input}
-            setDate={setDOB}
-            placeholder="Date Of Birth"
-          />
+          <TouchableOpacity onPress={showDatePicker}>
+            <View pointerEvents="none">
+              <Input
+                placeholder="Date Of Birth"
+                value={item.dob}
+                editable={false}
+                style={styles.input}
+              />
+            </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() =>
@@ -115,10 +132,9 @@ const TeamBios = () => {
       <ComponentBody>
         <Header title={"Team BIOS"} />
         <FlatList
-          // style={{backgroundColor: 'red', padding: 0, margin: 0,}}
           scrollEnabled={false}
           data={teamBiosUser}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderUser}
         />
         <TextComponent text={"Add New User"} style={styles.userTxt} />
@@ -129,13 +145,18 @@ const TeamBios = () => {
             style={styles.input}
             onChangeText={(e) => setName(e)}
           />
-          <DatePick
-            date={DOB}
-            maximumDate={new Date()}
-            style={styles.input}
-            setDate={setDOB}
-            placeholder="Date Of Birth"
-          />
+
+          <TouchableOpacity onPress={showDatePicker}>
+            <View pointerEvents="none">
+              <Input
+                placeholder="Choose Date.."
+                value={DOB}
+                editable={false}
+                style={styles.date__input}
+              />
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity onPress={addUser}>
             <Icon
               name={"add-box"}
@@ -152,13 +173,13 @@ const TeamBios = () => {
               dispatch(
                 showAlert({
                   message:
-                    "Your information has not been saved. Please click (+) to add the information"
+                    "Your information has not been saved. Please click (+) to add the information",
                 })
               );
               return;
             } else if (teamBiosUser.length < 1) {
               dispatch(
-                showAlert({ message: "Please add atleast 1 users to predict" })
+                showAlert({ message: "Please add at least 1 user to predict" })
               );
               return;
             }
@@ -167,40 +188,13 @@ const TeamBios = () => {
           style={styles.button}
         />
       </ComponentBody>
-      <Modal
-        onRequestClose={() => setShowModal(false)}
-        animationType={"fade"}
-        transparent={true}
-        visible={showModal}
-      >
-        <View style={styles.modalCont}>
-          <View style={styles.modal}>
-            <TextComponent
-              text={"Unlock True Accuracy in Sports Betting!"}
-              style={{
-                fontSize: 16,
-                textAlign: "center",
-                // fontWeight: 'bold',
-                fontFamily: fonts.BOLD_ITALIC
-              }}
-            />
-            <TextComponent
-              text={"Discover  Teambios Mobile app\ncoming in 2025!"}
-              style={{
-                fontSize: 14,
-                textAlign: "center",
-                fontFamily: fonts.BOLD_ITALIC
-              }}
-            />
-
-            <Button
-              title={"Continue"}
-              onPress={() => setShowModal(false)}
-              style={styles.button}
-            />
-          </View>
-        </View>
-      </Modal>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={handleConfirm}
+        onCancel={() => setDatePickerVisibility(false)}
+      />
     </>
   );
 };
@@ -213,10 +207,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   input: {
-    width: "42%"
+    width: "48%",
+  },
+  date__input: {
+    width: "62%",
   },
   modal: {
     backgroundColor: `${colors.WHITE}50`,
@@ -226,25 +223,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     // height: 200,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   modalCont: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)"
+    backgroundColor: "rgba(0,0,0,0.6)",
   },
   heading: {
-    fontSize: 16
+    fontSize: 16,
   },
   button: {
     width: "90%",
     marginTop: 10,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   userTxt: {
     marginLeft: 30,
     fontWeight: "bold",
-    marginVertical: 5
-  }
+    marginVertical: 5,
+  },
 });

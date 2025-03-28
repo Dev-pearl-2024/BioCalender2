@@ -4,7 +4,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ImageBackground,
-  View
+  View,
 } from "react-native";
 import React from "react";
 import BG from "../assests/images/bg1.png";
@@ -17,18 +17,18 @@ const ComponentBody = (props) => {
       style={{ flex: 1 }}
     >
       {/* {Platform.OS === "ios" && ( */}
-        <Image
-          source={BG}
-          style={{ height: "100%", width: "100%", position: "absolute" }}
-          resizeMode={"cover"}
-        />
+      <Image
+        source={BG}
+        style={{ height: "100%", width: "100%", position: "absolute" }}
+        resizeMode={"cover"}
+      />
       {/* )} */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={"handled"}
         contentContainerStyle={[
           { alignItems: props?.center ? "center" : null },
-          props.contentContainerStyle
+          props.contentContainerStyle,
         ]}
         style={{ ...props?.style }}
       >

@@ -1,30 +1,73 @@
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ImageBackground,
+} from "react-native";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../utilities/colors";
 import TextComponent from "../../components/TextComponent";
-import Image from "../../components/Image";
 import ComponentBody from "../../components/ComponentBody";
-import Icon, { IconTypes } from "../../components/Icon";
+import { FontAwesome5, MaterialIcons, Octicons } from "@expo/vector-icons";
 import ImageView from "react-native-image-viewing";
 import moment from "moment";
-import { Octicons } from "@expo/vector-icons";
+import OpenImagePicker from "../../components/ImagePicker";
 
 const profile = require("../../assests/images/Avatar.png");
 
 const Profile = () => {
   const [visible, setVisible] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const navigation = useNavigation();
   const user = useSelector((state) => state.AuthReducer.user) || {};
+
+  const onPressSelectProfile = () => {
+    OpenImagePicker((img) => {
+      let imageObj = img.path.split("/");
+      let imgObject = {
+        name: imageObj[imageObj.length - 1],
+        uri: img.path,
+        size: img.size,
+        type: img.mime,
+      };
+      setProfileImage(imgObject);
+    });
+  };
 
   return (
     <ComponentBody style={styles.container} center>
-      <TouchableOpacity onPress={() => setVisible(true)}>
-        <Image
-          resizeMode="cover"
-          source={user?.profile_image ? { uri: user?.profile_image } : profile}
+      {/* Edit Icon in the Top Right Corner */}
+      <TouchableOpacity
+        style={styles.editIconTop}
+        onPress={() => navigation.navigate("EditProfile")}
+      >
+        <MaterialIcons name="edit" size={24} color={colors.WHITE} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => setVisible(true)}
+        style={styles.imageContainer}
+      >
+        <ImageBackground
+          source={
+            profileImage
+              ? { uri: profileImage.uri }
+              : user?.profile_image
+              ? { uri: user?.profile_image }
+              : profile
+          }
           style={styles.profImage}
-          // tintColor={colors.PRIMARY}
-        />
+          imageStyle={styles.profile_image}
+        >
+          <TouchableOpacity
+            onPress={onPressSelectProfile}
+            style={styles.editIconContainer}
+          >
+            <FontAwesome5 name="edit" size={18} color={colors.WHITE} />
+          </TouchableOpacity>
+        </ImageBackground>
       </TouchableOpacity>
 
       <TextComponent text={user?.name} style={styles.nameText} />
@@ -67,7 +110,6 @@ const Profile = () => {
               size={18}
               color={user?.is_subscribed ? colors.GREEN : colors.RED}
             />
-            ;
             <TextComponent
               text={user?.is_subscribed ? "Active" : "Not Active"}
               style={styles.span2}
@@ -77,7 +119,13 @@ const Profile = () => {
       )}
 
       <ImageView
-        images={[user?.profile_image ? { uri: user?.profile_image } : profile]}
+        images={[
+          profileImage
+            ? { uri: profileImage.uri }
+            : user?.profile_image
+            ? { uri: user?.profile_image }
+            : profile,
+        ]}
         imageIndex={0}
         visible={visible}
         onRequestClose={() => setVisible(false)}
@@ -90,7 +138,19 @@ export default Profile;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20
+    marginTop: 20,
+  },
+  editIconTop: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: colors.GREEN,
+    padding: 8,
+    borderRadius: 20,
+  },
+  imageContainer: {
+    alignSelf: "center",
+    marginVertical: 20,
   },
   profImage: {
     width: 180,
@@ -98,18 +158,34 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderWidth: 3,
     borderColor: colors.GREEN,
-    resizeMode: "cover"
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  profile_image: {
+    borderRadius: 100,
+  },
+  editIconContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#1f232861",
+    borderRadius: 20,
+    width: "100%",
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
   nameText: {
     marginVertical: 8,
     fontSize: 16,
     marginBottom: 15,
-    color: colors.WHITE
+    color: colors.WHITE,
   },
   span: {
     marginVertical: 5,
     fontSize: 16,
-    color: colors.WHITE
+    color: colors.WHITE,
   },
   descCont: {
     width: "95%",
@@ -119,7 +195,7 @@ const styles = StyleSheet.create({
     borderBottomColor: `${colors.WHITE}80`,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    alignItems: "center"
+    alignItems: "center",
   },
   subscriptionCont: {
     width: "95%",
@@ -128,24 +204,21 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     alignItems: "center",
-    color: colors.WHITE
   },
   span2: {
     color: `${colors.WHITE}90`,
     fontSize: 15,
     textAlign: "right",
-    color: colors.WHITE,
-    width: "65%"
+    width: "65%",
   },
   subText: {
     width: "90%",
     marginVertical: 15,
     fontSize: 16,
-    color: colors.WHITE
+    color: colors.WHITE,
   },
   activeCont: {
     flexDirection: "row",
     gap: 5,
-    color: colors.WHITE
-  }
+  },
 });

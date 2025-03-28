@@ -44,7 +44,7 @@ const Apis = {
   subscriptions: `${BASE_URL}subscriptions`,
   // buy_subscription: `${BASE_URL}buy_subscription`,
   buy_subscription: `${BASE_URL}pay-via-stripe-token`,
-  cancel_subscription: `${BASE_URL}cancel_subscription`
+  cancel_subscription: `${BASE_URL}cancel_subscription`,
 };
 
 export default Apis;
